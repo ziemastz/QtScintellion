@@ -264,6 +264,10 @@ jobs:
           cd $BUILD_DIR
           curl -L https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -o linuxdeployqt
           chmod +x linuxdeployqt
+          # Remove unavailable SQL driver (mimer) to avoid missing libmimerapi.so during bundling.
+          if [ -f "$Qt6_DIR/plugins/sqldrivers/libqsqlmimer.so" ]; then
+            rm "$Qt6_DIR/plugins/sqldrivers/libqsqlmimer.so"
+          fi
           APP_DIR=QtScintellionUI
           EXE=QtScintellionUI/QtScintellionUI
           if [ ! -f "$EXE" ]; then
