@@ -1,4 +1,4 @@
-name: Release Builds (Win + Linux)
+﻿name: Release Builds (Win + Linux)
 
 on:
   push:
@@ -47,8 +47,59 @@ jobs:
           cd $BUILD_DIR/QtScintellionTests
           QT_QPA_PLATFORM=offscreen ./QtScintellionTests
 
+  tests-windows:
+    runs-on: windows-latest
+    env:
+      QT_VERSION: 6.7.3
+      QT_ARCH: win64_msvc2019_64
+      BUILD_DIR: build-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute version (yy.m.d)
+        id: meta_tests
+        shell: pwsh
+        run: |
+          $ver = Get-Date -Format 'yy.M.d'
+          "version=$ver" >> $env:GITHUB_OUTPUT
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ env.QT_ARCH }}
+          cache: true
+
+      - name: Configure tests (qmake, release)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:BUILD_DIR | Out-Null
+          Push-Location $env:BUILD_DIR
+          qmake -config release ..\src\QtScintellion\QtScintellion.pro
+          Pop-Location
+
+      - name: Build tests
+        shell: pwsh
+        run: |
+          Push-Location $env:BUILD_DIR
+          nmake /S sub-QtScintellionTests
+          Pop-Location
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:BUILD_DIR "QtScintellionTests/QtScintellionTests.exe"
+          if (-not (Test-Path $exe)) { Write-Error "Test exe not found at $exe" }
+          & $exe -platform offscreen
+
   build-and-release-windows:
-    needs: tests-linux
+    needs: [tests-linux, tests-windows]
     runs-on: windows-latest
     permissions:
       contents: write
