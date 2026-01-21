@@ -5,7 +5,8 @@ on:
     branches: [ main ]
 
 env:
-  QT_VERSION: 6.10.1
+  # Qt 6.7.3 is available on online installers and works with MSVC 2019/2022 toolchains
+  QT_VERSION: 6.7.3
   QT_ARCH: win64_msvc2019_64
   BUILD_DIR: build
 
