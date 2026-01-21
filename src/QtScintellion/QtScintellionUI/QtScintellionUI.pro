@@ -34,6 +34,10 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionRep
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionUserService/release -lQtScintellionUserService
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionUserService/debug -lQtScintellionUserService
 
+unix: LIBS += -L$$OUT_PWD/../QtScintellionDatabase -lQtScintellionDatabase
+unix: LIBS += -L$$OUT_PWD/../QtScintellionRepository -lQtScintellionRepository
+unix: LIBS += -L$$OUT_PWD/../QtScintellionUserService -lQtScintellionUserService
+
 TRANSLATIONS += \
     QtScintellionUI_en_US.ts \
     QtScintellionUI_pl_PL.ts
