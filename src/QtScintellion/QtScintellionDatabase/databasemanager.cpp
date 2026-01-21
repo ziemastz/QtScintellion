@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
+#include <QByteArray>
 
 namespace {
 constexpr auto kConnectionName = "QtScintellionConnection";
@@ -35,6 +36,11 @@ QString DatabaseManager::databaseFilePath() const
 
 QString DatabaseManager::resolveDatabaseFilePath() const
 {
+    const QByteArray envPath = qgetenv("QTSCINTELLION_DB_PATH");
+    if (!envPath.isEmpty()) {
+        return QString::fromUtf8(envPath);
+    }
+
     const QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(appDataDir);
     if (!dir.exists()) {
