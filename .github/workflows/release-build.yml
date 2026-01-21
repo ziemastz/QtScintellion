@@ -94,9 +94,16 @@ jobs:
       - name: Run tests
         shell: pwsh
         run: |
-          $exe = Join-Path $env:BUILD_DIR "QtScintellionTests/QtScintellionTests.exe"
-          if (-not (Test-Path $exe)) { Write-Error "Test exe not found at $exe" }
-          & $exe -platform offscreen
+          $candidates = @(
+            Join-Path $env:BUILD_DIR "QtScintellionTests/QtScintellionTests.exe"),
+            Join-Path $env:BUILD_DIR "QtScintellionTests/release/QtScintellionTests.exe"
+          foreach ($p in $candidates) {
+            if (Test-Path $p) {
+              & $p -platform offscreen
+              exit $LASTEXITCODE
+            }
+          }
+          Write-Error ("Test exe not found. Checked: " + ($candidates -join ', '))
 
   build-and-release-windows:
     needs: [tests-linux, tests-windows]
@@ -233,6 +240,9 @@ jobs:
           version: ${{ env.QT_VERSION }}
           arch: ${{ env.QT_ARCH }}
           cache: true
+
+      - name: Install deploy deps
+        run: sudo apt-get update && sudo apt-get install -y libxcb-cursor0
 
       - name: Install linuxdeployqt deps
         run: sudo apt-get update && sudo apt-get install -y patchelf
