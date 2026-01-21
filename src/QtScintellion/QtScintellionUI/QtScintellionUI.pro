@@ -23,12 +23,16 @@ FORMS += \
 
 INCLUDEPATH += ../QtScintellionRepository
 INCLUDEPATH += ../QtScintellionDatabase
+INCLUDEPATH += ../QtScintellionUserService
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionDatabase/release -lQtScintellionDatabase
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionDatabase/debug -lQtScintellionDatabase
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionRepository/release -lQtScintellionRepository
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionRepository/debug -lQtScintellionRepository
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionUserService/release -lQtScintellionUserService
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtScintellionUserService/debug -lQtScintellionUserService
 
 TRANSLATIONS += \
     QtScintellionUI_en_US.ts \

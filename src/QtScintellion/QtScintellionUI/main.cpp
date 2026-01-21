@@ -1,7 +1,6 @@
 #include "Dialog/logindialog.h"
 #include "mainwindow.h"
-#include "databasemanager.h"
-#include "userrepository.h"
+#include "userservice.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -22,15 +21,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    auto &dbManager = DatabaseManager::instance();
-    if (!dbManager.open()) {
-        QMessageBox::critical(nullptr, QObject::tr("Błąd bazy danych"), QObject::tr("Nie można otworzyć bazy danych."));
+    UserService userService;
+    QString initError;
+    if (!userService.initialize(&initError)) {
+        QMessageBox::critical(nullptr, QObject::tr("Blad bazy danych"), initError);
         return -1;
     }
-
-    UserRepository userRepo(dbManager.database());
-    userRepo.ensureSchema();
-    userRepo.ensureDefaultAdmin();
 
     bool authenticated = false;
     while (!authenticated) {
@@ -38,11 +34,12 @@ int main(int argc, char *argv[])
 
         QObject::connect(&loginDialog, &LoginDialog::exitRequested, &loginDialog, &LoginDialog::reject);
         QObject::connect(&loginDialog, &LoginDialog::loginRequested, [&]() {
-            if (userRepo.validateCredentials(loginDialog.login(), loginDialog.password())) {
+            QString authError;
+            if (userService.authenticate(loginDialog.login(), loginDialog.password(), &authError)) {
                 authenticated = true;
                 loginDialog.accept();
             } else {
-                QMessageBox::warning(&loginDialog, QObject::tr("Błąd logowania"), QObject::tr("Nieprawidłowy login lub hasło."));
+                QMessageBox::warning(&loginDialog, QObject::tr("Blad logowania"), authError);
             }
         });
 

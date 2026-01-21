@@ -1,9 +1,11 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    QtScintellionUserService \
     QtScintellionDatabase \
     QtScintellionRepository \
     QtScintellionUI
 
 QtScintellionRepository.depends = QtScintellionDatabase
-QtScintellionUI.depends = QtScintellionRepository
+QtScintellionUserService.depends = QtScintellionRepository
+QtScintellionUI.depends = QtScintellionUserService
