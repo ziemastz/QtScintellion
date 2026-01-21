@@ -95,8 +95,9 @@ jobs:
         shell: pwsh
         run: |
           $candidates = @(
-            Join-Path $env:BUILD_DIR "QtScintellionTests/QtScintellionTests.exe"),
-            Join-Path $env:BUILD_DIR "QtScintellionTests/release/QtScintellionTests.exe"
+            (Join-Path $env:BUILD_DIR "QtScintellionTests/QtScintellionTests.exe"),
+            (Join-Path $env:BUILD_DIR "QtScintellionTests/release/QtScintellionTests.exe")
+          )
           foreach ($p in $candidates) {
             if (Test-Path $p) {
               & $p -platform offscreen
