@@ -32,16 +32,16 @@ jobs:
         run: |
           mkdir -p $BUILD_DIR
           cd $BUILD_DIR
-          qmake -config release ../src/QtScintellion/QtScintellionTests/QtScintellionTests.pro
+          qmake -config release ../src/QtScintellion/QtScintellion.pro
 
       - name: Build tests
         run: |
           cd $BUILD_DIR
-          make -j2
+          make -j2 sub-QtScintellionTests
 
       - name: Run tests
         run: |
-          cd $BUILD_DIR
+          cd $BUILD_DIR/QtScintellionTests
           ./QtScintellionTests
 
   build-and-release-windows:
