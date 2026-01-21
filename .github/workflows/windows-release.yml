@@ -55,7 +55,7 @@ jobs:
       - name: Deploy Qt dependencies (windeployqt)
         shell: pwsh
         run: |
-          $exePath = Join-Path $env:BUILD_DIR "release/QtScintellionUI/QtScintellionUI.exe"
+          $exePath = Join-Path $env:BUILD_DIR "QtScintellionUI/release/QtScintellionUI.exe"
           if (-not (Test-Path $exePath)) {
             Write-Error "Executable not found at $exePath"
           }
@@ -67,7 +67,7 @@ jobs:
         run: |
           $version = "${{ steps.meta.outputs.version }}"
           $zipName = "QtScintellion-Windows-$version.zip"
-          $payloadRoot = Join-Path $env:BUILD_DIR "release/QtScintellionUI"
+          $payloadRoot = Join-Path $env:BUILD_DIR "QtScintellionUI/release"
           if (-not (Test-Path $payloadRoot)) {
             Write-Error "Payload root not found: $payloadRoot"
           }
