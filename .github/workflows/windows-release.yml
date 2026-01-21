@@ -1,0 +1,116 @@
+name: Windows Release
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  QT_VERSION: 6.10.1
+  QT_ARCH: win64_msvc2019_64
+  BUILD_DIR: build
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute version (yy.m.d)
+        id: meta
+        shell: pwsh
+        run: |
+          $ver = Get-Date -Format 'yy.M.d'
+          "version=$ver" >> $env:GITHUB_OUTPUT
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ env.QT_ARCH }}
+          cache: true
+
+      - name: Configure (qmake, release)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:BUILD_DIR | Out-Null
+          Push-Location $env:BUILD_DIR
+          qmake -config release ..\src\QtScintellion\QtScintellion.pro
+          Pop-Location
+
+      - name: Build (Release)
+        shell: pwsh
+        run: |
+          Push-Location $env:BUILD_DIR
+          nmake /S
+          Pop-Location
+
+      - name: Deploy Qt dependencies (windeployqt)
+        shell: pwsh
+        run: |
+          $exePath = Join-Path $env:BUILD_DIR "release/QtScintellionUI/QtScintellionUI.exe"
+          if (-not (Test-Path $exePath)) {
+            Write-Error "Executable not found at $exePath"
+          }
+          $windeploy = Join-Path $env:Qt6_DIR "bin/windeployqt.exe"
+          & $windeploy --release --no-translations "$exePath"
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.meta.outputs.version }}"
+          $zipName = "QtScintellion-Windows-$version.zip"
+          $payloadRoot = Join-Path $env:BUILD_DIR "release/QtScintellionUI"
+          if (-not (Test-Path $payloadRoot)) {
+            Write-Error "Payload root not found: $payloadRoot"
+          }
+          Compress-Archive -Path (Join-Path $payloadRoot '*') -DestinationPath $zipName -Force
+          "asset=$zipName" >> $env:GITHUB_OUTPUT
+        id: package
+
+      - name: Delete existing release/tag if present
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.meta.outputs.version }}';
+            const tag = version;
+            // Delete release if exists
+            try {
+              const rel = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag
+              });
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: rel.data.id,
+              });
+            } catch (err) {
+              if (err.status !== 404) throw err;
+            }
+            // Delete tag if exists
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+              });
+            } catch (err) {
+              if (err.status !== 404) throw err;
+            }
+
+      - name: Create release and upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.version }}
+          name: ${{ steps.meta.outputs.version }}
+          files: ${{ steps.package.outputs.asset }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
