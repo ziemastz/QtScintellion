@@ -33,6 +33,11 @@ Makefile*
 *.qm
 *.prl
 
+# Allow workflows
+!.github/
+!.github/workflows/
+!.github/workflows/release-build.yml
+
 # Qt unit tests
 target_wrapper.*
 
