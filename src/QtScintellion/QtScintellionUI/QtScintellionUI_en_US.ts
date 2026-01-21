@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="pl_PL">
+<TS version="2.1" language="en_US">
 <context>
     <name>LoginDialog</name>
     <message>
@@ -11,32 +11,32 @@
     <message>
         <location filename="Dialog/logindialog.ui" line="35"/>
         <source>Wprowadź dane do logowania</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entre login data</translation>
     </message>
     <message>
         <location filename="Dialog/logindialog.ui" line="42"/>
         <source>Nazwa użytkowanika lub email</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Username or email</translation>
     </message>
     <message>
         <location filename="Dialog/logindialog.ui" line="52"/>
         <source>Hasło</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Password</translation>
     </message>
     <message>
         <location filename="Dialog/logindialog.ui" line="77"/>
         <source>Rejestracja</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Register</translation>
     </message>
     <message>
         <location filename="Dialog/logindialog.ui" line="100"/>
         <source>Zaloguj</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Login</translation>
     </message>
     <message>
         <location filename="Dialog/logindialog.ui" line="110"/>
         <source>Wyjście</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exit</translation>
     </message>
 </context>
 <context>
