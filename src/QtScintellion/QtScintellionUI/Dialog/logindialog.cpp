@@ -30,7 +30,5 @@ void LoginDialog::setupConnections()
 {
     connect(ui->loginPushButton, &QPushButton::clicked, this, &LoginDialog::loginRequested);
     connect(ui->exitPushButton, &QPushButton::clicked, this, &LoginDialog::exitRequested);
-    connect(ui->registerPushButton, &QPushButton::clicked, this, [this]() {
-        // Future registration handling can go here.
-    });
+    connect(ui->registerPushButton, &QPushButton::clicked, this, &LoginDialog::registerRequested);
 }

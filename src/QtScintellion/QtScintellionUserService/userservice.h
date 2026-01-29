@@ -13,6 +13,7 @@ public:
 
     bool initialize(QString *errorMessage = nullptr);
     bool authenticate(const QString &login, const QString &password, QString *errorMessage = nullptr);
+    bool registerUser(const QString &username, const QString &email, const QString &password, QString *errorMessage = nullptr);
 
 private:
     UserRepository *m_userRepository;

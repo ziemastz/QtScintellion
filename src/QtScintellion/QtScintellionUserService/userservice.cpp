@@ -59,3 +59,38 @@ bool UserService::authenticate(const QString &login, const QString &password, QS
     }
     return ok;
 }
+
+bool UserService::registerUser(const QString &username, const QString &email, const QString &password, QString *errorMessage)
+{
+    if (!m_userRepository) {
+        if (errorMessage) {
+            *errorMessage = QObject::tr("Serwis użytkownika nie został zainicjalizowany.");
+        }
+        return false;
+    }
+    if (username.trimmed().isEmpty() || email.trimmed().isEmpty() || password.isEmpty()) {
+        if (errorMessage) {
+            *errorMessage = QObject::tr("Uzupełnij nazwę użytkownika, email i hasło.");
+        }
+        return false;
+    }
+    if (m_userRepository->findByUsername(username.trimmed()).has_value()) {
+        if (errorMessage) {
+            *errorMessage = QObject::tr("Użytkownik o podanej nazwie już istnieje.");
+        }
+        return false;
+    }
+    if (m_userRepository->findByEmail(email.trimmed()).has_value()) {
+        if (errorMessage) {
+            *errorMessage = QObject::tr("Adres email jest już zajęty.");
+        }
+        return false;
+    }
+    if (!m_userRepository->addUser(username, email, password)) {
+        if (errorMessage) {
+            *errorMessage = QObject::tr("Nie udało się utworzyć użytkownika.");
+        }
+        return false;
+    }
+    return true;
+}
