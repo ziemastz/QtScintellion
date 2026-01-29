@@ -10,15 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     Dialog/logindialog.cpp \
+    Dialog/registerdialog.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Dialog/logindialog.h \
+    Dialog/registerdialog.h \
     mainwindow.h
 
 FORMS += \
     Dialog/logindialog.ui \
+    Dialog/registerdialog.ui \
     mainwindow.ui
 
 INCLUDEPATH += ../QtScintellionRepository

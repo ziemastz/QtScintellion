@@ -21,6 +21,7 @@ public:
 signals:
     void loginRequested();
     void exitRequested();
+    void registerRequested();
 
 private:
     void setupConnections();
